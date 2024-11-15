@@ -1,71 +1,151 @@
 "use client";
 
-import Link from "next/link";
-import type { NextPage } from "next";
+import React, { useState } from "react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ArrowDownUp, ChevronDown, Wallet } from "lucide-react";
+import { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+import { PlaceholderIcon } from "~~/components/assets/ImgPlaceholderIcon";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
+  const [inputAmount, setInputAmount] = useState("");
+  const [outputAmount, setOutputAmount] = useState("");
+  const [inputToken, setInputToken] = useState("");
+  const [outputToken, setOutputToken] = useState("");
+  const [isSwapping, setIsSwapping] = useState(false);
+  const { address, isConnected } = useAccount();
+
+  const isTokenSelected = inputToken && outputToken;
+  const hasAmount = inputAmount || outputAmount;
+
+  const triggerSwapAnimation = () => {
+    setIsSwapping(true);
+    setTimeout(() => setIsSwapping(false), 500);
+  };
+
+  const handleInputSwap = () => {
+    triggerSwapAnimation();
+    setInputAmount(outputAmount);
+    setOutputAmount(inputAmount);
+    setInputToken(outputToken);
+    setOutputToken(inputToken);
+  };
+
+  const handleSwap = (openConnectModal: () => void, connected: boolean) => {
+    if (!connected) {
+      openConnectModal();
+    } else if (isTokenSelected && hasAmount) {
+      triggerSwapAnimation();
+      // Swap logic here
+    }
+  };
 
   return (
-    <>
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
-          </div>
-
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4">
+      <div className="max-w-lg mx-auto mt-10">
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold mb-2">Swap anytime,</h1>
+          <h1 className="text-5xl font-bold">anywhere.</h1>
         </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+        <div className="bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
+          {/* Sell Token Section */}
+          <div className={`bg-gray-900/80 rounded-2xl p-4 mb-2 transition-all ${isSwapping ? "animate-glow" : ""}`}>
+            <div className="text-gray-400 mb-2">Sell</div>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <input
+                  type="number"
+                  value={inputAmount}
+                  onChange={e => setInputAmount(e.target.value)}
+                  placeholder="0"
+                  className="bg-transparent text-3xl w-full outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
+                />
+                <div className="text-gray-400 text-sm mt-1">≈ $0.00</div>
+              </div>
+              <button
+                onClick={() => setInputToken("ETH")}
+                className="flex items-center gap-2 bg-gray-800 hover:bg-blue-500/20 transition-colors rounded-full px-4 py-2 border border-transparent hover:border-blue-500/40"
+              >
+                <PlaceholderIcon />
+                {inputToken || "Select"}
+                <ChevronDown size={20} />
+              </button>
             </div>
           </div>
+
+          {/* Swap Input Button */}
+          <div className="flex justify-center -mb-4 -mt-5 relative z-10">
+            <div className="bg-gray-800/50 p-2 rounded-2xl">
+              <button
+                onClick={handleInputSwap}
+                className="bg-blue-500/20 hover:bg-blue-500/30 p-2 rounded-xl border border-blue-500/40"
+              >
+                <ArrowDownUp size={20} className="text-blue-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* Buy Token Section */}
+          <div className={`bg-gray-900/80 rounded-2xl p-4 mb-4 transition-all ${isSwapping ? "animate-glow" : ""}`}>
+            <div className="text-gray-400 mb-2">Buy</div>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <input
+                  type="number"
+                  value={outputAmount}
+                  onChange={e => setOutputAmount(e.target.value)}
+                  placeholder="0"
+                  className="bg-transparent text-3xl w-full outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
+                />
+                <div className="text-gray-400 text-sm mt-1">≈ $0.00</div>
+              </div>
+              <button
+                onClick={() => setOutputToken("USDC")}
+                className="flex items-center gap-2 bg-gray-800 hover:bg-blue-500/20 transition-colors rounded-full px-4 py-2 border border-transparent hover:border-blue-500/40"
+              >
+                <PlaceholderIcon />
+                {outputToken || "Select"}
+                <ChevronDown size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Swap Button */}
+          <ConnectButton.Custom>
+            {({ account, chain, openConnectModal }) => {
+              const connected = account && chain;
+
+              const getButtonText = () => {
+                if (!connected) return "Connect Wallet";
+                if (!isTokenSelected) return "Select a token";
+                if (!hasAmount) return "Select amount";
+                return "Swap";
+              };
+
+              const isButtonDisabled = connected && (!isTokenSelected || !hasAmount);
+
+              return (
+                <button
+                  onClick={() => handleSwap(openConnectModal, !!connected)}
+                  disabled={isButtonDisabled}
+                  className={`w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
+                    ${
+                      !isButtonDisabled
+                        ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/25"
+                        : "bg-gray-700 cursor-not-allowed"
+                    }`}
+                >
+                  <Wallet size={20} />
+                  {getButtonText()}
+                </button>
+              );
+            }}
+          </ConnectButton.Custom>
         </div>
+
+        <p className="text-gray-400 text-center mt-8 text-lg">Some great phrase here...</p>
       </div>
-    </>
+    </div>
   );
 };
 

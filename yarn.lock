@@ -1771,6 +1771,7 @@ __metadata:
     eslint-config-next: ~14.2.15
     eslint-config-prettier: ~8.10.0
     eslint-plugin-prettier: ~5.2.1
+    lucide-react: ^0.459.0
     next: ~14.2.11
     next-nprogress-bar: ~2.3.13
     next-themes: ~0.3.0
@@ -7374,6 +7375,15 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
+  languageName: node
+  linkType: hard
+
+"lucide-react@npm:^0.459.0":
+  version: 0.459.0
+  resolution: "lucide-react@npm:0.459.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
+  checksum: e5eaceba9afebcaf960128685eb8480d0384e6b3e5148f5442719bc7479ae6492631db325121272d23fe73ffdc8984ad04a0ed6c1b5c47d15e135b5da993e593
   languageName: node
   linkType: hard
 
