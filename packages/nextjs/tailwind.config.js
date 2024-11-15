@@ -69,7 +69,7 @@ module.exports = {
         },
       },
       animation: {
-        glow: "glow 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        glow: "glow 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },

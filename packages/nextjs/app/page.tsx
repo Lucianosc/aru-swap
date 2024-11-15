@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { ArrowDownUp, ChevronDown, Wallet } from "lucide-react";
+import { ArrowDownUp } from "lucide-react";
 import { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { PlaceholderIcon } from "~~/components/assets/ImgPlaceholderIcon";
+import { TokenInput } from "~~/components/TokenInput";
 
 const Home: NextPage = () => {
   const [inputAmount, setInputAmount] = useState("");
@@ -20,7 +20,7 @@ const Home: NextPage = () => {
 
   const triggerSwapAnimation = () => {
     setIsSwapping(true);
-    setTimeout(() => setIsSwapping(false), 500);
+    setTimeout(() => setIsSwapping(false), 200);
   };
 
   const handleInputSwap = () => {
@@ -48,67 +48,39 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-bold">anywhere.</h1>
         </div>
         <div className="bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
-          {/* Sell Token Section */}
-          <div className={`bg-gray-900/80 rounded-2xl p-4 mb-2 transition-all ${isSwapping ? "animate-glow" : ""}`}>
-            <div className="text-gray-400 mb-2">Sell</div>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <input
-                  type="number"
-                  value={inputAmount}
-                  onChange={e => setInputAmount(e.target.value)}
-                  placeholder="0"
-                  className="bg-transparent text-3xl w-full outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
-                />
-                <div className="text-gray-400 text-sm mt-1">≈ $0.00</div>
-              </div>
-              <button
-                onClick={() => setInputToken("ETH")}
-                className="flex items-center gap-2 bg-gray-800 hover:bg-blue-500/20 transition-colors rounded-full px-4 py-2 border border-transparent hover:border-blue-500/40"
-              >
-                <PlaceholderIcon />
-                {inputToken || "Select"}
-                <ChevronDown size={20} />
-              </button>
-            </div>
-          </div>
+          <>
+            <TokenInput
+              label="Sell"
+              amount={inputAmount}
+              setAmount={setInputAmount}
+              token={inputToken}
+              setToken={setInputToken}
+              isSwapping={isSwapping}
+              defaultToken="ETH"
+            />
 
-          {/* Swap Input Button */}
-          <div className="flex justify-center -mb-4 -mt-5 relative z-10">
-            <div className="bg-gray-800/50 p-2 rounded-2xl">
-              <button
-                onClick={handleInputSwap}
-                className="bg-blue-500/20 hover:bg-blue-500/30 p-2 rounded-xl border border-blue-500/40"
-              >
-                <ArrowDownUp size={20} className="text-blue-400" />
-              </button>
-            </div>
-          </div>
-
-          {/* Buy Token Section */}
-          <div className={`bg-gray-900/80 rounded-2xl p-4 mb-4 transition-all ${isSwapping ? "animate-glow" : ""}`}>
-            <div className="text-gray-400 mb-2">Buy</div>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <input
-                  type="number"
-                  value={outputAmount}
-                  onChange={e => setOutputAmount(e.target.value)}
-                  placeholder="0"
-                  className="bg-transparent text-3xl w-full outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
-                />
-                <div className="text-gray-400 text-sm mt-1">≈ $0.00</div>
+            {/* Swap Input Button */}
+            <div className="flex justify-center -mb-4 -mt-5 relative z-10">
+              <div className="bg-gray-800/50 p-2 rounded-2xl">
+                <button
+                  onClick={handleInputSwap}
+                  className="bg-blue-500/20 hover:bg-blue-500/30 p-2 rounded-xl border border-blue-500/40"
+                >
+                  <ArrowDownUp size={20} className="text-blue-400" />
+                </button>
               </div>
-              <button
-                onClick={() => setOutputToken("USDC")}
-                className="flex items-center gap-2 bg-gray-800 hover:bg-blue-500/20 transition-colors rounded-full px-4 py-2 border border-transparent hover:border-blue-500/40"
-              >
-                <PlaceholderIcon />
-                {outputToken || "Select"}
-                <ChevronDown size={20} />
-              </button>
             </div>
-          </div>
+
+            <TokenInput
+              label="Buy"
+              amount={outputAmount}
+              setAmount={setOutputAmount}
+              token={outputToken}
+              setToken={setOutputToken}
+              isSwapping={isSwapping}
+              defaultToken="USDC"
+            />
+          </>
 
           {/* Swap Button */}
           <ConnectButton.Custom>
@@ -135,7 +107,6 @@ const Home: NextPage = () => {
                         : "bg-gray-700 cursor-not-allowed"
                     }`}
                 >
-                  <Wallet size={20} />
                   {getButtonText()}
                 </button>
               );
