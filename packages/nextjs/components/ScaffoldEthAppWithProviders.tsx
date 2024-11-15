@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MiniKit } from "@worldcoin/minikit-js";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
@@ -18,10 +19,10 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen relative">
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
       <Toaster />
     </>
@@ -35,6 +36,15 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+export function MiniKitProvider({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    MiniKit.install();
+    console.log(MiniKit.isInstalled());
+  }, []);
+
+  return <>{children}</>;
+}
 
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
@@ -53,7 +63,11 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           avatar={BlockieAvatar}
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          <MiniKitProvider
+          // appId="YOUR_APP_ID"
+          >
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </MiniKitProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
