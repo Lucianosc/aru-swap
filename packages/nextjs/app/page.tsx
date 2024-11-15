@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4">
+    <div className="text-white p-4">
       <div className="max-w-lg mx-auto mt-10">
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-2">Swap anytime,</h1>
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
             />
 
             {/* Swap Input Button */}
-            <div className="flex justify-center -mb-4 -mt-5 relative z-10">
+            <div className="flex justify-center -my-3 relative z-10">
               <div className="bg-gray-800/50 p-2 rounded-2xl">
                 <button
                   onClick={handleInputSwap}
@@ -100,7 +100,7 @@ const Home: NextPage = () => {
                 <button
                   onClick={() => handleSwap(openConnectModal, !!connected)}
                   disabled={isButtonDisabled}
-                  className={`w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
+                  className={`w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
                     ${
                       !isButtonDisabled
                         ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/25"
@@ -113,7 +113,6 @@ const Home: NextPage = () => {
             }}
           </ConnectButton.Custom>
         </div>
-
         <p className="text-gray-400 text-center mt-8 text-lg">Some great phrase here...</p>
       </div>
     </div>
