@@ -57,7 +57,14 @@ const WorldIDAuth = ({ onSuccess }: { onSuccess?: () => void }) => {
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
         >
-          {loading ? <span className="loading loading-spinner"></span> : "Verify with World ID"}
+          {loading ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <>
+              <WorldcoinSvg className="w-6 h-6" />
+              Verify with World ID
+            </>
+          )}
         </button>
       )}
     </IDKitWidget>

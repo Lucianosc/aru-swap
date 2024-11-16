@@ -1,4 +1,4 @@
-export const VerificationIcon = ({ className = "" }) => (
+export const WorldcoinSvg = ({ className = "" }) => (
   <svg viewBox="110 44 225 225" className={className} xmlns="http://www.w3.org/2000/svg">
     <path
       d="M327.6,115.2c-3-7.5-6.8-14.6-11.3-21.3c-20.3-30-54.7-49.7-93.6-49.7c-62.4,0-112.9,50.6-112.9,112.9
@@ -13,4 +13,4 @@ export const VerificationIcon = ({ className = "" }) => (
   </svg>
 );
 
-export default VerificationIcon;
+export default WorldcoinSvg;
