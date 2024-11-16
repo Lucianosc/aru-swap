@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
+import { CHAIN_NAMESPACES, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { Loader2 } from "lucide-react";
+import { Header } from "~~/components/Header";
 import WorldIDAuth from "~~/components/WorldIDAuth";
 import Web3AuthSvg from "~~/components/assets/Web3AuthSvg";
 
@@ -114,49 +115,46 @@ function App() {
     }
   }
 
-  if (isInitializing) {
-    return (
-      <div className="max-w-lg mx-auto mt-10">
-        <div className="flex flex-col gap-2 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="text-white p-4">
-      <div className="max-w-lg mx-auto mt-10">
-        <div className="flex flex-col gap-4 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
-          {loggedIn === "web3Auth" ? (
-            <>
-              <h1 className="text-3xl">{userInfo?.name}</h1>
-              <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
-              <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
-              <button
-                onClick={logout}
-                className="max-w-32 bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-2 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
-              >
-                Log Out
-              </button>
-            </>
-          ) : (
-            <>
-              {!(loggedIn === "worldId") && (
-                <button
-                  onClick={login}
-                  className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
-                >
-                  <Web3AuthSvg className="w-6 h-6" />
-                  Web3Auth social login
-                </button>
+    <>
+      <Header />
+      <main className="relative flex flex-col flex-1">
+        <div className="text-white p-4">
+          <div className="max-w-lg mx-auto mt-10">
+            <div className="flex flex-col gap-4 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
+              {isInitializing ? (
+                <Loader2 className="h-8 w-8 animate-spin" />
+              ) : loggedIn === "web3Auth" ? (
+                <>
+                  <h1 className="text-3xl">{userInfo?.name}</h1>
+                  <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
+                  <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
+                  <button
+                    onClick={logout}
+                    className="max-w-32 bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-2 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+                  >
+                    Log Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  {!(loggedIn === "worldId") && (
+                    <button
+                      onClick={login}
+                      className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+                    >
+                      <Web3AuthSvg className="w-6 h-6" />
+                      Web3Auth social login
+                    </button>
+                  )}
+                  <WorldIDAuth onSuccess={() => setLoggedIn("worldId")} />
+                </>
               )}
-              <WorldIDAuth onSuccess={() => setLoggedIn("worldId")} />
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
 
