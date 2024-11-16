@@ -37,43 +37,43 @@ const Home: NextPage = () => {
     setOutputToken(inputToken);
   };
 
-  useEffect(() => {
-    if (inputToken && outputToken) {
-      updateTokens(inputToken, outputToken);
-    }
-  }, [inputToken, outputToken, updateTokens]);
+  // useEffect(() => {
+  //   if (inputToken && outputToken) {
+  //     updateTokens(inputToken, outputToken);
+  //   }
+  // }, [inputToken, outputToken, updateTokens]);
 
-  const handleSwap = async (openConnectModal: () => void, connected: boolean) => {
-    if (!connected) {
-      openConnectModal();
-    } else if (isTokenSelected && hasAmount) {
-      try {
-        setIsLoading(true);
-        setError(null);
+  // const handleSwap = async (openConnectModal: () => void, connected: boolean) => {
+  //   if (!connected) {
+  //     openConnectModal();
+  //   } else if (isTokenSelected && hasAmount) {
+  //     try {
+  //       setIsLoading(true);
+  //       setError(null);
 
-        const hookData = await generateCombinedCallData(
-          inputToken,
-          outputToken,
-          inputAmount,
-          Number(outputAmount),
-          address || "",
-        );
+  //       const hookData = await generateCombinedCallData(
+  //         inputToken,
+  //         outputToken,
+  //         inputAmount,
+  //         Number(outputAmount),
+  //         address || "",
+  //       );
 
-        addHook({
-          hook: {
-            target: inputToken,
-            callData: hookData,
-            gasLimit: "300000",
-          },
-        });
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "An error occurred");
-        console.error("Error creating swap hook:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+  //       addHook({
+  //         hook: {
+  //           target: inputToken,
+  //           callData: hookData,
+  //           gasLimit: "300000",
+  //         },
+  //       });
+  //     } catch (error) {
+  //       setError(error instanceof Error ? error.message : "An error occurred");
+  //       console.error("Error creating swap hook:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="text-white p-4">
@@ -139,19 +139,22 @@ const Home: NextPage = () => {
               const isButtonDisabled = connected && (!isTokenSelected || !hasAmount);
 
               return (
-                <button
-                  type="button"
-                  onClick={() => handleSwap(openConnectModal, !!connected)}
-                  disabled={isButtonDisabled}
-                  className={`w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
-                    ${
-                      !isButtonDisabled
-                        ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/25"
-                        : "bg-gray-700 cursor-not-allowed"
-                    }`}
-                >
-                  {getButtonText()}
-                </button>
+                <div>
+                  
+                </div>
+                // <button
+                //   type="button"
+                //   onClick={() => handleSwap(openConnectModal, !!connected)}
+                //   disabled={isButtonDisabled}
+                //   className={`w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
+                //     ${
+                //       !isButtonDisabled
+                //         ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/25"
+                //         : "bg-gray-700 cursor-not-allowed"
+                //     }`}
+                // >
+                //   {getButtonText()}
+                // </button>
               );
             }}
           </ConnectButton.Custom>
