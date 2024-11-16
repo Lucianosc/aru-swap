@@ -10,7 +10,7 @@ export async function GET() {
         "Experience the future of DeFi with AruSwap - the first dApp combining CowSwap's powerful hooks engine with Circle's secure bridging for seamless cross-chain transactions. Trade and bridge assets across networks in one click, saving time and gas.",
       version: "0.0.1",
       website: "https://aru-swap.vercel.app",
-      image: "/logo.png",
+      image: "https://aru-swap.vercel.app/logo.png",
       conditions: {
         position: "post",
         smartContractWalletSupported: true,
