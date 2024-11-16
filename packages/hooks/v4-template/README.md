@@ -70,12 +70,13 @@ function afterSwap(
 ## 🛠️ Technical Components
 
 1. **Smart Contracts**
-   - `AruSwapHook.sol`: Main hook implementation
-   - Test suite: `AruSwapHook.t.sol`
-   - Deployment scripts in `script/AruSwapHook/`
+   - `AruSwapHook.sol`: Main hook implementation [AruSwapHook](./src/AruSwapHook.sol)
+   - Test suite: `AruSwapHook.t.sol` [AruSwapHook.t](./test/AruSwapHook.t.sol)
+   - Deployment scripts in `script/AruSwapHook/` [scripts](./script/)
 
 2. **Deployments**
-   - Ethereum Sepolia deployment details in `broadcast/01_CreatePoolAndMintLiquidity.s.sol/11155111/run-latest.json`
+   - Ethereum Sepolia hook deployment `broadcast/00_AruSwapHook.s.sol/11155111/run-latest.json`
+   - Ethereum Sepolia pool deployment details in `broadcast/01_CreatePoolAndMintLiquidity.s.sol/11155111/run-latest.json`
 
 3. **Commands**
    - Check [notes](./notes.md)
