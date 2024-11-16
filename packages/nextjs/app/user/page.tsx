@@ -126,7 +126,7 @@ function App() {
               {isInitializing ? (
                 <Loader2 className="h-8 w-8 animate-spin" />
               ) : loggedIn === "web3Auth" ? (
-                <>
+                <div className="flex flex-col gap-2 items-center">
                   <h1 className="text-3xl">{userInfo?.name}</h1>
                   <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
                   <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
@@ -136,7 +136,7 @@ function App() {
                   >
                     Log Out
                   </button>
-                </>
+                </div>
               ) : (
                 <>
                   {!(loggedIn === "worldId") && (
@@ -153,7 +153,7 @@ function App() {
               )}
             </div>
           </div>
-          <Dashboard />
+          {loggedIn !== undefined && <Dashboard />}
         </div>
       </main>
     </>

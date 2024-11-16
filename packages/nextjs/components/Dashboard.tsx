@@ -55,7 +55,7 @@ const Dashboard = () => {
   const [showAddWallet, setShowAddWallet] = useState(false);
 
   return (
-    <section className="flex flex-col gap-2 items-center text-start w-full text-white p-6">
+    <section className="flex flex-col gap-2 items-center text-start w-full text-white py-6 sm:px-6">
       <div className="max-w-6xl w-full">
         {/* Tab Navigation */}
         <div className="flex gap-4 mb-6 border-b border-gray-700">
@@ -157,7 +157,19 @@ const Dashboard = () => {
                         <div className="text-sm text-gray-400">{swap.chain}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                      <div className="flex gap-2">
+                        <ExternalLink
+                          size={18}
+                          className="text-gray-400 hover:text-white cursor-pointer"
+                          // onClick={() => onViewExplorer(swap.id)}
+                        />
+                        <Trash2
+                          size={18}
+                          className="text-gray-400 hover:text-red-400 cursor-pointer"
+                          // onClick={() => onDelete(swap.id)}
+                        />
+                      </div>
                       <span
                         className={`text-sm px-2 py-1 rounded ${
                           swap.status === "completed"
@@ -167,8 +179,6 @@ const Dashboard = () => {
                       >
                         {swap.status}
                       </span>
-                      <ExternalLink size={18} className="text-gray-400 hover:text-white cursor-pointer" />
-                      <Trash2 size={18} className="text-gray-400 hover:text-red-400 cursor-pointer" />
                     </div>
                   </div>
                   <div className="text-sm text-gray-400">{swap.timestamp}</div>
