@@ -21,7 +21,7 @@ export const TokenInput = ({
   isSwapping,
   defaultToken = "Select",
 }: TokenInputProps) => (
-  <div className={`bg-gray-900/80 rounded-2xl p-4 transition-all ${isSwapping ? "animate-glow" : ""}`}>
+  <div className={`bg-gray-900/80 rounded-2xl px-4 py-2 transition-all ${isSwapping ? "animate-glow" : ""}`}>
     <div className="text-gray-400 mb-2">{label}</div>
     <div className="flex items-center gap-4">
       <div className="flex-1">

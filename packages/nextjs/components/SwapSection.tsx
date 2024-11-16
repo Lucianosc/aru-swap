@@ -84,7 +84,7 @@ export default function SwapSection() {
         />
 
         {/* Swap Input Button */}
-        <div className="flex justify-center -my-3 relative z-10">
+        <div className="flex justify-center -my-5 relative z-10">
           <div className="bg-gray-800/50 p-2 rounded-2xl">
             <button
               type="button"
@@ -129,7 +129,7 @@ export default function SwapSection() {
               type="button"
               onClick={() => handleSwap(openConnectModal, !!connected)}
               disabled={isButtonDisabled}
-              className={`w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
+              className={`w-full py-4 mt-3 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
               ${
                 !isButtonDisabled
                   ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/25"
