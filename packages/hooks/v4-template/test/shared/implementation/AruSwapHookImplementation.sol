@@ -11,9 +11,10 @@ contract AruSwapHookImplementation is AruSwapHook {
     constructor(
         IPoolManager _poolManager,
         address _tokenMessenger,
+        address _tokenMinter,
         address _usdc,
         AruSwapHook addressToEtch
-    ) AruSwapHook(_poolManager, _tokenMessenger, _usdc) {
+    ) AruSwapHook(_poolManager, _tokenMessenger, _tokenMinter, _usdc) {
         Hooks.validateHookPermissions(addressToEtch, getHookPermissions());
     }
 

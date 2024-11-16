@@ -30,8 +30,8 @@ contract AddLiquidityScript is Script, Constants, Config {
     int24 tickSpacing = 60;
 
     // --- liquidity position configuration --- //
-    uint256 public token0Amount = 300000000;
-    uint256 public token1Amount = 1000000000000;
+    uint256 public token0Amount = 300000;
+    uint256 public token1Amount = 1000000000;
 
     // range of the position
     int24 tickLower = -600; // must be a multiple of tickSpacing

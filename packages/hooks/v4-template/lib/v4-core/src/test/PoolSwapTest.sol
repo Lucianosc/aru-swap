@@ -9,6 +9,7 @@ import {IHooks} from "../interfaces/IHooks.sol";
 import {Hooks} from "../libraries/Hooks.sol";
 import {PoolTestBase} from "./PoolTestBase.sol";
 import {CurrencySettler} from "../../test/utils/CurrencySettler.sol";
+import {console2} from "forge-std/console2.sol";
 
 contract PoolSwapTest is PoolTestBase {
     using CurrencySettler for Currency;
@@ -57,6 +58,8 @@ contract PoolSwapTest is PoolTestBase {
         require(deltaBefore1 == 0, "deltaBefore1 is not equal to 0");
 
         BalanceDelta delta = manager.swap(data.key, data.params, data.hookData);
+        console2.log(delta.amount0());
+        console2.log(delta.amount1());
 
         (,, int256 deltaAfter0) = _fetchBalances(data.key.currency0, data.sender, address(this));
         (,, int256 deltaAfter1) = _fetchBalances(data.key.currency1, data.sender, address(this));

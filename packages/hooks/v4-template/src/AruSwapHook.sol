@@ -26,6 +26,7 @@ contract AruSwapHook is BaseHook {
 
     // CCTP TokenMessenger contract
     ITokenMessenger public immutable tokenMessenger;
+    address public immutable tokenMinter;
     
     // USDC token address that can be burned
     address public immutable usdcToken;
@@ -34,10 +35,12 @@ contract AruSwapHook is BaseHook {
     constructor(
         IPoolManager _poolManager,
         address _tokenMessenger,
+        address _tokenMinter,
         address _usdcToken
     ) BaseHook(_poolManager) {
         require(_tokenMessenger != address(0), "Invalid TokenMessenger");
         tokenMessenger = ITokenMessenger(_tokenMessenger);
+        tokenMinter = _tokenMinter;
         usdcToken = _usdcToken;
     }
 
@@ -54,14 +57,14 @@ contract AruSwapHook is BaseHook {
             beforeDonate: false,
             afterDonate: false,
             beforeSwapReturnDelta: false,
-            afterSwapReturnDelta: false,
+            afterSwapReturnDelta: true,
             afterAddLiquidityReturnDelta: false,
             afterRemoveLiquidityReturnDelta: false
         });
     }
 
     function afterSwap(
-        address sender,
+        address,
         PoolKey calldata key,
         IPoolManager.SwapParams calldata params,
         BalanceDelta delta,
@@ -70,9 +73,9 @@ contract AruSwapHook is BaseHook {
         // Parse hookData for cross-chain transfer parameters
         if (hookData.length > 0) {
             // Decode hookData (expected format: destinationDomain, mintRecipient)
-            (uint32 destinationDomain, bytes32 mintRecipient, address user) = abi.decode(
+            (uint32 destinationDomain, bytes32 mintRecipient) = abi.decode(
                 hookData,
-                (uint32, bytes32, address)
+                (uint32, bytes32)
             );
 
             // Check if we're swapping for USDC (token0 or token1 depending on zeroForOne)
@@ -80,24 +83,37 @@ contract AruSwapHook is BaseHook {
                 Currency.unwrap(key.currency1) == usdcToken :
                 Currency.unwrap(key.currency0) == usdcToken;
 
-            // If USDC is the output token and we have a positive balance
-            if (isUSDCOutput) {
-                uint256 usdcAmount = uint256(uint128(params.zeroForOne ? delta.amount1() : delta.amount0()));
-                if (usdcAmount > 0) {
-                    // Take the USDC from the sender instead of the hook
-                    IERC20(usdcToken).transferFrom(user, address(this), usdcAmount);
-
-                    // Approve the token messenger to take USDC from the hook
-                    IERC20(usdcToken).approve(address(tokenMessenger), usdcAmount);
-                    
-                    tokenMessenger.depositForBurn(
-                        usdcAmount,
-                        destinationDomain,
-                        mintRecipient,
-                        usdcToken
-                    );
-                }
-            }
+                // If USDC is the output token and we have a positive balance
+             if (isUSDCOutput) {
+                 // Get the USDC amount from the delta
+                 int128 usdcDeltaAmount = delta.amount0();
+              
+                 // Only proceed if we have a positive USDC amount
+                 if (usdcDeltaAmount > 0) {
+                     uint256 usdcAmount = uint256(uint128(usdcDeltaAmount));
+                  
+                     // Get the USDC currency
+                     Currency usdcCurrency = key.currency0;
+                  
+                     // Take USDC from pool manager to hook
+                     poolManager.take(usdcCurrency, address(this), usdcAmount);
+                  
+                     // Approve CCTP to spend USDC
+                     IERC20(usdcToken).approve(address(tokenMessenger), usdcAmount);
+                  
+                     // poolManager.sync(usdcCurrency);
+                     // Initiate the cross-chain transfer
+                     tokenMessenger.depositForBurn(
+                         usdcAmount,
+                         destinationDomain,
+                         mintRecipient,
+                         usdcToken
+                     ); 
+                     return (BaseHook.afterSwap.selector, -usdcDeltaAmount);
+                     // Settle any remaining balances with the pool
+                     // poolManager.settle();
+                 }
+             }
         }
 
         return (BaseHook.afterSwap.selector, 0);

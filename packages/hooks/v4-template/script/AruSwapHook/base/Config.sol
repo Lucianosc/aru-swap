@@ -14,7 +14,7 @@ contract Config {
     // TEST_TOKEN
     IERC20 constant token1 = IERC20(address(0x34182d56d905a195524a8F1813180C134687ca34));
     // https://sepolia.etherscan.io/tx/0xd0c026c0b843d4406818f6f13322635d2d583d1269bf04a63376142b209891e6
-    IHooks constant hookContract = IHooks(address(0xa3EC8Bf389cbFB9f74412E5c320EB84C5865C040));
+    IHooks constant hookContract = IHooks(address(0xC67D7BEd547A861d45fd6639b3Fbd1E4e850C040));
     Currency constant currency0 = Currency.wrap(address(token0));
     Currency constant currency1 = Currency.wrap(address(token1));
 }

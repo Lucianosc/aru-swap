@@ -50,13 +50,16 @@ contract SwapScript is Script, Constants, Config {
         vm.broadcast();
         token0.approve(address(tokenMessenger), type(uint256).max);
 
+        vm.broadcast();
+        token0.approve(address(tokenMinter), type(uint256).max);
+
         // ------------------------------ //
         // Swap token1 into USDC and bridge //
         // ------------------------------ //
         bool zeroForOne = false; // swap token1 for USDC (token0)
         IPoolManager.SwapParams memory params = IPoolManager.SwapParams({
             zeroForOne: zeroForOne,
-            amountSpecified: 100,
+            amountSpecified: -100,
             sqrtPriceLimitX96: zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT // unlimited impact
         });
 

@@ -24,6 +24,7 @@ contract AruSwapHookScript is Script, Constants, Config {
         bytes memory constructorArgs = abi.encode(
             POOLMANAGER,
             tokenMessenger,
+            tokenMinter,
             token0
         );
 
@@ -36,6 +37,7 @@ contract AruSwapHookScript is Script, Constants, Config {
         AruSwapHook aruSwapHook = new AruSwapHook{salt: salt}(
             IPoolManager(POOLMANAGER),
             address(tokenMessenger),
+            address(tokenMinter),
             address(token0)
         );
         require(address(aruSwapHook) == hookAddress, "AruSwapHookScript: hook address mismatch");

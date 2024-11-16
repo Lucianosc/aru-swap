@@ -70,11 +70,12 @@ contract AruSwapHookTest is Test, Fixtures {
         deployAndApprovePosm(manager);
 
         // Deploy the hook to an address with the correct flags
-        address flags = address(uint160(Hooks.AFTER_SWAP_FLAG));
+        address flags = address(uint160(Hooks.AFTER_SWAP_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG));
 
         // Deploy implementation first
         AruSwapHookImplementation impl = new AruSwapHookImplementation(
             IPoolManager(manager),
+            address(mockTokenMessenger),
             address(mockTokenMessenger),
             Currency.unwrap(currency0), // Use currency0 as USDC
             AruSwapHook(flags)
