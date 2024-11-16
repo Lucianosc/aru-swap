@@ -14,7 +14,7 @@ import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+const App = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
 
   return (
@@ -46,7 +46,7 @@ export function MiniKitProvider({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
+export const Providers = ({ children }: { children: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
@@ -55,6 +55,9 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     setMounted(true);
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
+  console.log(googleClientId);
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
@@ -66,7 +69,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           <MiniKitProvider
           // appId="YOUR_APP_ID"
           >
-            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            <App>{children}</App>
           </MiniKitProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
