@@ -84,10 +84,9 @@ contract AruSwapHook is BaseHook {
             if (isUSDCOutput) {
                 uint256 usdcAmount = uint256(uint128(params.zeroForOne ? delta.amount1() : delta.amount0()));
                 if (usdcAmount > 0) {
-                    // Approve TokenMessenger to spend USDC
-                    IERC20(usdcToken).approve(address(tokenMessenger), usdcAmount);
-
-                    // Initiate cross-chain transfer
+                    // Take the USDC from the sender instead of the hook
+                    // IERC20(usdcToken).transferFrom(sender, address(this), usdcAmount);
+                    
                     tokenMessenger.depositForBurn(
                         usdcAmount,
                         destinationDomain,
@@ -105,4 +104,5 @@ contract AruSwapHook is BaseHook {
 // Basic IERC20 interface for approval
 interface IERC20 {
     function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 }

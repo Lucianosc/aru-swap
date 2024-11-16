@@ -20,6 +20,9 @@ import {EasyPosm} from "./utils/EasyPosm.sol";
 import {Fixtures} from "./utils/Fixtures.sol";
 import {AruSwapHookImplementation} from "./shared/implementation/AruSwapHookImplementation.sol";
 
+
+import {MockERC20} from "forge-std/mocks/MockERC20.sol";
+
 // Mock TokenMessenger for testing
 contract MockTokenMessenger {
     event DepositForBurn(
@@ -35,6 +38,9 @@ contract MockTokenMessenger {
         bytes32 mintRecipient,
         address burnToken
     ) external returns (uint64) {
+        // Transfer tokens to zero address to simulate burning
+        MockERC20(burnToken).transferFrom(msg.sender, address(0), amount);
+        
         emit DepositForBurn(amount, destinationDomain, mintRecipient, burnToken);
         return 1; // Return a dummy message sequence
     }
@@ -131,11 +137,20 @@ contract AruSwapHookTest is Test, Fixtures {
         bytes32 mintRecipient = bytes32(uint256(uint160(address(this))));
         bytes memory hookData = abi.encode(destinationDomain, mintRecipient);
 
+        // Pre-approve the hook to take USDC from the swapper (this contract)
+        MockERC20(Currency.unwrap(currency0)).approve(address(hook), type(uint256).max);
+
         // Start recording events
         vm.recordLogs();
 
+        // Record initial USDC balance
+        uint256 initialUsdcBalance = MockERC20(Currency.unwrap(currency0)).balanceOf(address(this));
+
         // Perform the swap
         BalanceDelta swapDelta = swap(key, zeroForOne, amountSpecified, hookData);
+
+        // Get final USDC balance
+        uint256 finalUsdcBalance = MockERC20(Currency.unwrap(currency0)).balanceOf(address(this));
 
         // Get the recorded logs
         Vm.Log[] memory entries = vm.getRecordedLogs();
@@ -161,6 +176,13 @@ contract AruSwapHookTest is Test, Fixtures {
         
         assertTrue(foundEvent, "DepositForBurn event not emitted");
 
+        // Verify the tokens were actually burned
+        assertEq(
+            finalUsdcBalance,
+            initialUsdcBalance + uint256(uint128(swapDelta.amount0())),
+            "USDC balance not updated correctly"
+        );
+
         // Verify the swap amounts
         assertEq(int256(swapDelta.amount1()), amountSpecified);
         assertTrue(swapDelta.amount0() > 0); // Verify we received USDC
@@ -176,5 +198,18 @@ contract AruSwapHookTest is Test, Fixtures {
         // Verify the swap amounts
         assertEq(int256(swapDelta.amount1()), amountSpecified);
         assertTrue(swapDelta.amount0() > 0);
+    }
+
+    function testFailCrossChainSwapWithoutApproval() public {
+        // This test should fail because the hook is not approved to take USDC
+        bool zeroForOne = false;
+        int256 amountSpecified = -1e18;
+        
+        uint32 destinationDomain = 1;
+        bytes32 mintRecipient = bytes32(uint256(uint160(address(this))));
+        bytes memory hookData = abi.encode(destinationDomain, mintRecipient);
+
+        // Don't approve the hook - this should cause the test to fail
+        swap(key, zeroForOne, amountSpecified, hookData);
     }
 }
