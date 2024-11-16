@@ -6,6 +6,7 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { Loader2 } from "lucide-react";
 import WorldIDAuth from "~~/components/WorldIDAuth";
+import Web3AuthSvg from "~~/components/assets/Web3AuthSvg";
 
 const clientId = "BIZBqC4L8bFWbdFjPwIeboE4Pj9aKyuSjuaT9ystH8SsjCK8Xn4xpVbZmBwe4lV_evcBgze_PRE5XXbqIYPcueg";
 
@@ -146,6 +147,7 @@ function App() {
                   onClick={login}
                   className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
                 >
+                  <Web3AuthSvg className="w-6 h-6" />
                   Web3Auth social login
                 </button>
               )}
