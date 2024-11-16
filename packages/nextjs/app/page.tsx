@@ -37,11 +37,11 @@ const Home: NextPage = () => {
     setOutputToken(inputToken);
   };
 
-  useEffect(() => {
-    if (inputToken && outputToken) {
-      updateTokens(inputToken, outputToken);
-    }
-  }, [inputToken, outputToken, updateTokens]);
+  // useEffect(() => {
+  //   if (inputToken && outputToken) {
+  //     updateTokens(inputToken, outputToken);
+  //   }
+  // }, [inputToken, outputToken, updateTokens]);
 
   const handleSwap = async (openConnectModal: () => void, connected: boolean) => {
     if (!connected) {
@@ -59,13 +59,13 @@ const Home: NextPage = () => {
           address || "",
         );
 
-        addHook({
-          hook: {
-            target: inputToken,
-            callData: hookData,
-            gasLimit: "300000",
-          },
-        });
+        //addHook({
+        //  hook: {
+        //    target: inputToken,
+        //    callData: hookData,
+        //    gasLimit: "300000",
+        //  },
+        //});
       } catch (error) {
         setError(error instanceof Error ? error.message : "An error occurred");
         console.error("Error creating swap hook:", error);
