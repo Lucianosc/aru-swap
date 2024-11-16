@@ -9,6 +9,7 @@ import { TokenInput } from "~~/components/TokenInput";
 import { generateCombinedCallData } from "~~/utils/cow-hook/cowGenerateHookData";
 import CowHookDappComponent from "../components/cowSwap"
 
+
 const Home: NextPage = () => {
   const [inputAmount, setInputAmount] = useState("");
   const [outputAmount, setOutputAmount] = useState("");
@@ -16,7 +17,7 @@ const Home: NextPage = () => {
   const [outputToken, setOutputToken] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const { address, isConnected } = useAccount();
-  const { context, addHook, updateTokens } = useCowHook();
+  //const { context, addHook, updateTokens } = useCowHook();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
