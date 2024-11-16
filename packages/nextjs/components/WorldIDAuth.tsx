@@ -55,7 +55,7 @@ const WorldIDAuth = ({ onSuccess }: { onSuccess?: () => void }) => {
         <button
           onClick={open}
           disabled={loading}
-          className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+          className="bg-blue-500 p-4 hover:bg-blue-600 shadow-blue-500/25 w-full rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
         >
           {loading ? (
             <span className="loading loading-spinner"></span>

@@ -5,6 +5,7 @@ import { CHAIN_NAMESPACES, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { Loader2 } from "lucide-react";
+import Dashboard from "~~/components/Dashboard";
 import { Header } from "~~/components/Header";
 import WorldIDAuth from "~~/components/WorldIDAuth";
 import Web3AuthSvg from "~~/components/assets/Web3AuthSvg";
@@ -152,6 +153,7 @@ function App() {
               )}
             </div>
           </div>
+          <Dashboard />
         </div>
       </main>
     </>
