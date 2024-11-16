@@ -62,7 +62,7 @@ contract SwapScript is Script, Constants, Config {
 
         // Prepare cross-chain transfer parameters
         bytes32 mintRecipient = bytes32(uint256(uint160(recipient)));
-        bytes memory hookData = abi.encode(destinationDomain, mintRecipient);
+        bytes memory hookData = abi.encode(destinationDomain, mintRecipient, address(this));
 
         vm.broadcast();
         swapRouter.swap(pool, params, testSettings, hookData);
