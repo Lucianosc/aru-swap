@@ -16,7 +16,7 @@ const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
 
   const isTokenSelected = inputToken && outputToken;
-  const hasAmount = inputAmount || outputAmount;
+  const hasAmount = inputAmount && outputAmount;
 
   const triggerSwapAnimation = () => {
     setIsSwapping(true);
@@ -44,8 +44,8 @@ const Home: NextPage = () => {
     <div className="text-white p-4">
       <div className="max-w-lg mx-auto mt-10">
         <div className="mb-8">
-          <h1 className="text-5xl font-bold mb-2">Swap anytime,</h1>
-          <h1 className="text-5xl font-bold">anywhere.</h1>
+          <h1 className="text-5xl font-bold mb-2">Swap & bridge,</h1>
+          <h1 className="text-5xl font-bold mb-2">the hell out.</h1>
         </div>
         <div className="bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
           <>

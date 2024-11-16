@@ -40,7 +40,7 @@ export const queryClient = new QueryClient({
 export function MiniKitProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     MiniKit.install();
-    console.log(MiniKit.isInstalled());
+    // console.log(MiniKit.isInstalled());
   }, []);
 
   return <>{children}</>;
