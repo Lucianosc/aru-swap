@@ -63,15 +63,16 @@ export const getMetadata = ({
     },
     cow_hook_dapp: {
       id: "06a2747d08f0026f47aebb91ac13172a318eb3f6116f742751e2d83cc61b8753",
-      name: "Your Hook Dapp",
-      descriptionShort: "Your Hook Dapp short description",
-      description: "Your Hook Dapp full description",
+      name: "Swap & Bridge dApp",
+      descriptionShort: "Swap and bridge assets across chains seamlessly",
+      description:
+        "A dApp that enables users to swap tokens and bridge them across different chains in a single transaction using CoW Protocol",
       version: "0.0.1",
-      website: "https://your-cow-hook.dapp",
-      image: "http://your-cow-hook.dapp/logo.png",
+      website: "YOUR_WEBSITE_URL",
+      image: "YOUR_LOGO_URL",
       conditions: {
         position: "pre",
-        smartContractWalletSupported: false,
+        smartContractWalletSupported: true,
         supportedNetworks: [1, 100, 42161],
       },
     },

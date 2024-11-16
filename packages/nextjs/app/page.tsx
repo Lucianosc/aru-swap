@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ArrowDownUp } from "lucide-react";
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { TokenInput } from "~~/components/TokenInput";
 import { generateCombinedCallData } from "~~/utils/cow-hook/cowGenerateHookData";
+import { useCowHook } from "~~/utils/cow-hook/useCowHook";
 
 const Home: NextPage = () => {
   const [inputAmount, setInputAmount] = useState("");
@@ -15,6 +16,9 @@ const Home: NextPage = () => {
   const [outputToken, setOutputToken] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const { address, isConnected } = useAccount();
+  const { context, addHook, updateTokens } = useCowHook();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isTokenSelected = inputToken && outputToken;
   const hasAmount = inputAmount && outputAmount;
@@ -32,11 +36,41 @@ const Home: NextPage = () => {
     setOutputToken(inputToken);
   };
 
-  const handleSwap = (openConnectModal: () => void, connected: boolean) => {
+  useEffect(() => {
+    if (inputToken && outputToken) {
+      updateTokens(inputToken, outputToken);
+    }
+  }, [inputToken, outputToken, updateTokens]);
+
+  const handleSwap = async (openConnectModal: () => void, connected: boolean) => {
     if (!connected) {
       openConnectModal();
     } else if (isTokenSelected && hasAmount) {
-      // Swap logic here
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const hookData = await generateCombinedCallData(
+          inputToken,
+          outputToken,
+          inputAmount,
+          Number(outputAmount),
+          address || "",
+        );
+
+        addHook({
+          hook: {
+            target: inputToken,
+            callData: hookData,
+            gasLimit: "300000",
+          },
+        });
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "An error occurred");
+        console.error("Error creating swap hook:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -63,6 +97,8 @@ const Home: NextPage = () => {
             <div className="flex justify-center -my-3 relative z-10">
               <div className="bg-gray-800/50 p-2 rounded-2xl">
                 <button
+                  type="button"
+                  title="Swap"
                   onClick={handleInputSwap}
                   className="bg-blue-500/20 hover:bg-blue-500/30 p-2 rounded-xl border border-blue-500/40"
                 >
@@ -88,6 +124,8 @@ const Home: NextPage = () => {
               const connected = account && chain;
 
               const getButtonText = () => {
+                if (isLoading) return "Processing...";
+                if (error) return "Error - Try Again";
                 if (!connected) return "Connect Wallet";
                 if (!isTokenSelected) return "Select a token";
                 if (!hasAmount) return "Select amount";
@@ -98,6 +136,7 @@ const Home: NextPage = () => {
 
               return (
                 <button
+                  type="button"
                   onClick={() => handleSwap(openConnectModal, !!connected)}
                   disabled={isButtonDisabled}
                   className={`w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition
