@@ -35,7 +35,6 @@ const Home: NextPage = () => {
     if (!connected) {
       openConnectModal();
     } else if (isTokenSelected && hasAmount) {
-      triggerSwapAnimation();
       // Swap logic here
     }
   };
