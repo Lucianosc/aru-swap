@@ -39,6 +39,7 @@ contract MockTokenMessenger {
         address burnToken
     ) external returns (uint64) {
         // Transfer tokens to zero address to simulate burning
+        MockERC20(burnToken).approve(address(this), amount);
         MockERC20(burnToken).transferFrom(msg.sender, address(0), amount);
         
         emit DepositForBurn(amount, destinationDomain, mintRecipient, burnToken);
@@ -135,10 +136,12 @@ contract AruSwapHookTest is Test, Fixtures {
         // Prepare hookData for cross-chain transfer
         uint32 destinationDomain = 1;
         bytes32 mintRecipient = bytes32(uint256(uint160(address(this))));
-        bytes memory hookData = abi.encode(destinationDomain, mintRecipient);
+        bytes memory hookData = abi.encode(destinationDomain, mintRecipient, address(this));
 
         // Pre-approve the hook to take USDC from the swapper (this contract)
         MockERC20(Currency.unwrap(currency0)).approve(address(hook), type(uint256).max);
+        // Pre-approve the usdc token messenger
+        MockERC20(Currency.unwrap(currency0)).approve(address(mockTokenMessenger), type(uint256).max);
 
         // Start recording events
         vm.recordLogs();

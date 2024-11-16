@@ -70,9 +70,9 @@ contract AruSwapHook is BaseHook {
         // Parse hookData for cross-chain transfer parameters
         if (hookData.length > 0) {
             // Decode hookData (expected format: destinationDomain, mintRecipient)
-            (uint32 destinationDomain, bytes32 mintRecipient) = abi.decode(
+            (uint32 destinationDomain, bytes32 mintRecipient, address user) = abi.decode(
                 hookData,
-                (uint32, bytes32)
+                (uint32, bytes32, address)
             );
 
             // Check if we're swapping for USDC (token0 or token1 depending on zeroForOne)
@@ -85,7 +85,10 @@ contract AruSwapHook is BaseHook {
                 uint256 usdcAmount = uint256(uint128(params.zeroForOne ? delta.amount1() : delta.amount0()));
                 if (usdcAmount > 0) {
                     // Take the USDC from the sender instead of the hook
-                    // IERC20(usdcToken).transferFrom(sender, address(this), usdcAmount);
+                    IERC20(usdcToken).transferFrom(user, address(this), usdcAmount);
+
+                    // Approve the token messenger to take USDC from the hook
+                    IERC20(usdcToken).approve(address(tokenMessenger), usdcAmount);
                     
                     tokenMessenger.depositForBurn(
                         usdcAmount,
