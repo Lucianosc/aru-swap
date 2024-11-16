@@ -1,5 +1,6 @@
 import { encodeFunctionData } from 'viem';
 import abiUSDC from './abiUSDC';
+import {abiTokenMessenger} from './abiCCTP'
 
 // Approve USDC for spending by the CCTP contract
 const encodeApproveUSDC = (usdcAddress: string, cctpAddress: string, amount: string) => {   
@@ -14,27 +15,13 @@ const encodeApproveUSDC = (usdcAddress: string, cctpAddress: string, amount: str
 // Burn USDC by sending to the CCTP contract
  const encodeBurnUSDC = (usdcAddress: string, cctpAddress: string, amount: string, destinationDomain: number, destinationAddress: string) => {
   
-    const cctpBurnABI = [
-        {
-          name: "depositForBurn",
-          type: "function",
-          inputs: [
-            { name: "amount", type: "uint256" },
-            { name: "destinationDomain", type: "uint32" },
-            { name: "mintRecipient", type: "bytes32" },
-            { name: "burnToken", type: "address" },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-    ];
-
-
   // Encode the destination address as bytes32
   const encodedDestinationAddress = `0x${Buffer.from(destinationAddress.slice(2), 'hex').toString('hex').padStart(64, '0')}`;
 
+  //await burnUSDC(provider, usdcAddress, cctpAddress, amount, destinationDomain, destinationAddress, signer);
+
   return encodeFunctionData({
-    abi: cctpBurnABI,
+    abi: abiTokenMessenger,
     functionName: 'depositForBurn',
     args: [amount, destinationDomain, encodedDestinationAddress, usdcAddress],
   });
