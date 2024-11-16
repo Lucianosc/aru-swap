@@ -1,34 +1,54 @@
-import { encodeFunctionData } from 'viem';
-import abiUSDC from './abiUSDC';
-import {abiTokenMessenger} from './abiCCTP'
-
+import { abiTokenMessenger } from "./abiCCTP";
+import abiUSDC from "./abiUSDC";
+import { encodeFunctionData } from "viem";
 
 // Approve USDC for spending by the CCTP contract
-const encodeApproveUSDC = (usdcAddress: string, cctpAddress: string, amount: string) => {   
+const encodeApproveUSDCCowShed = (cowshedAddress: string, amount: string) => {
+    return encodeFunctionData({
+      abi: abiUSDC,
+      functionName: "approve",
+      args: [cowshedAddress, amount],
+    });
+  };
+// Approve USDC for spending by the CCTP contract
+const sendUSDCtoCowShed = (senderAddress:string, cowshedAddress: string, amount: string) => {
+    return encodeFunctionData({
+      abi: abiUSDC,
+      functionName: "transferFrom",
+      args: [senderAddress, cowshedAddress, amount],
+    });
+  };
 
+// Approve USDC for spending by the CCTP contract
+const encodeApproveUSDC = (cctpAddress: string, amount: string) => {
   return encodeFunctionData({
     abi: abiUSDC,
-    functionName: 'approve',
+    functionName: "approve",
     args: [cctpAddress, amount],
   });
 };
 
 // Burn USDC by sending to the CCTP contract
- const encodeBurnUSDC = (usdcAddress: string, cctpAddress: string, amount: string, destinationDomain: number, destinationAddress: string) => {
-  
+const encodeBurnUSDC = (
+  usdcAddress: string,
+  cctpAddress: string,
+  amount: string,
+  destinationDomain: number,
+  destinationAddress: string,
+) => {
   // Encode the destination address as bytes32
   //const encodedDestinationAddress = `0x${Buffer.from(destinationAddress.slice(2), 'hex').toString('hex').padStart(64, '0')}`;
   //This is ok
-  const encodedMintRecipient = `0x${destinationAddress.slice(2).padStart(64, '0')}`; // Ensure the address is 40 characters long
-  console.log('encodedDestinationAddress',encodedMintRecipient);
+  const encodedMintRecipient = `0x${destinationAddress.slice(2).padStart(64, "0")}`; // Ensure the address is 40 characters long
+  console.log("encodedDestinationAddress", encodedMintRecipient);
   //await burnUSDC(provider, usdcAddress, cctpAddress, amount, destinationDomain, destinationAddress, signer);
- 
+
   return encodeFunctionData({
     abi: abiTokenMessenger,
-    functionName: 'depositForBurn',
+    functionName: "depositForBurn",
     args: [amount, destinationDomain, encodedMintRecipient, usdcAddress],
   });
- };
+};
 
 // Function to combine both calldata (approve + burn) into a single transaction
 const generateCombinedCallData = (
@@ -36,15 +56,25 @@ const generateCombinedCallData = (
   cctpAddress: string,
   amount: string,
   destinationDomain: number,
-  destinationAddress: string
+  destinationAddress: string,
 ) => {
-  const approveData = encodeApproveUSDC(usdcAddress, cctpAddress, amount);
-  console.log('approveData: ', approveData)
-  const burnData = encodeBurnUSDC(usdcAddress, cctpAddress, amount, destinationDomain, destinationAddress);
-    console.log("burn: ", burnData)
+    const cowshedAddress = "0x56b524AFA4A4d89B110075De9bC16d45b23F3ea9";
+    const sender = "0x0c558b655d388f7041bc4FbfbdF02AE1a605F19B";
+
+
+    const approveCowShed= encodeApproveUSDCCowShed(cowshedAddress, amount);
+    const sendUSDCCowShed= sendUSDCtoCowShed(sender, cowshedAddress, amount);
+
+
+    const approveCCTP = encodeApproveUSDC(cctpAddress, amount); //this the signer needs to be the cowshed
+
+    console.log("approveData: ", approveCCTP);
+    
+    const burnData = encodeBurnUSDC(usdcAddress, cctpAddress, amount, destinationDomain, destinationAddress); //this need to be executed from the cowshed
+    console.log("burn: ", burnData);
   // Combine both calls into a single calldata
   //return approveData + burnData.slice(2); // Remove the leading "0x" from burnData
-    return  burnData;
+  return [approveCowShed,sendUSDCCowShed, approveCCTP, burnData] ;
 };
 
 export { generateCombinedCallData };
