@@ -55,9 +55,6 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     setMounted(true);
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
-  console.log(googleClientId);
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>

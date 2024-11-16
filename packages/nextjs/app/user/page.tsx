@@ -1,208 +1,144 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ADAPTER_EVENTS, CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
+import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
-import { getApps, initializeApp } from "firebase/app";
-import { GoogleAuthProvider, UserCredential, getAuth, signInWithPopup } from "firebase/auth";
-import RPC from "~~/services/web3/viem/RPC";
+import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
+import { Loader2 } from "lucide-react";
 
 const clientId = "BIZBqC4L8bFWbdFjPwIeboE4Pj9aKyuSjuaT9ystH8SsjCK8Xn4xpVbZmBwe4lV_evcBgze_PRE5XXbqIYPcueg";
 
-const verifier = "w3a-sfa-web-google";
-
 const chainConfig = {
-  chainId: "0xaa36a7",
-  displayName: "Ethereum Sepolia Testnet",
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  tickerName: "Ethereum",
-  ticker: "ETH",
-  decimals: 18,
+  chainId: "0xaa36a7",
   rpcTarget: "https://rpc.ankr.com/eth_sepolia",
+  displayName: "Ethereum Sepolia Testnet",
   blockExplorerUrl: "https://sepolia.etherscan.io",
-  logo: "https://cryptologos.cc/logos/polygon-matic-logo.png",
+  ticker: "ETH",
+  tickerName: "Ethereum",
+  logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
 };
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: { chainConfig },
 });
 
-const web3auth = new Web3Auth({
+const web3AuthOptions: Web3AuthOptions = {
   clientId,
   web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
   privateKeyProvider,
-});
+};
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCa4PKNw-WMIYbfawIZG2JB9p2IfS31UV4",
-  authDomain: "aru-swap.firebaseapp.com",
-  projectId: "aru-swap",
-  storageBucket: "aru-swap.firebasestorage.app",
-  messagingSenderId: "557724170653",
-  appId: "1:557724170653:web:6915d71f09054cbd929774",
-  measurementId: "G-W5MK57FYN3",
+const capitalizeFirstLetter = (str: string) => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 function App() {
+  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isLoginEnabled, enableLoginButton] = useState(false);
-
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  const [userInfo, setUserInfo] = useState<any>();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     const init = async () => {
       try {
-        await web3auth.init();
-        enableLoginButton(true);
-        if (web3auth.status === ADAPTER_EVENTS.CONNECTED) {
-          setProvider(web3auth.provider);
+        setIsInitializing(true);
+        const web3authInstance = new Web3Auth(web3AuthOptions);
+
+        await web3authInstance.initModal();
+
+        if (web3authInstance.connected) {
           setLoggedIn(true);
+          setProvider(web3authInstance.provider);
+          const user = await web3authInstance.getUserInfo();
+          setUserInfo(user);
         }
+
+        setWeb3auth(web3authInstance);
       } catch (error) {
-        console.error(error);
+        console.error("Error initializing Web3Auth:", error);
+      } finally {
+        setIsInitializing(false);
       }
     };
 
     init();
-  }, []);
 
-  const signInWithGoogle = async (): Promise<UserCredential> => {
-    try {
-      const auth = getAuth(app);
-      const googleProvider = new GoogleAuthProvider();
-      const res = await signInWithPopup(auth, googleProvider);
-      console.log(res);
-      return res;
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
+    // Cleanup function
+    return () => {
+      if (web3auth && web3auth.connected) {
+        web3auth.logout();
+      }
+    };
+  }, []);
 
   const login = async () => {
     if (!web3auth) {
-      uiConsole("web3auth initialised yet");
+      uiConsole("web3auth not initialized yet");
       return;
     }
-    // login with firebase
-    const loginRes = await signInWithGoogle();
-    // get the id token from firebase
-    const idToken = await loginRes.user.getIdToken(true);
-    const { payload } = decodeToken(idToken);
-    console.log(verifier, (payload as any).sub, idToken);
-
-    const web3authProvider = await web3auth.connect({
-      verifier,
-      verifierId: (payload as any).sub,
-      idToken,
-    });
-    console.log(web3authProvider);
-    if (web3authProvider) {
-      setLoggedIn(true);
+    try {
+      const web3authProvider = await web3auth.connect();
       setProvider(web3authProvider);
+      if (web3auth.connected) {
+        setLoggedIn(true);
+        const user = await web3auth.getUserInfo();
+        setUserInfo(user);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
     }
-  };
-
-  const getUserInfo = async () => {
-    const user = await web3auth.getUserInfo();
-    uiConsole(user);
   };
 
   const logout = async () => {
+    if (!web3auth) {
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
     await web3auth.logout();
     setProvider(null);
     setLoggedIn(false);
+    setUserInfo(undefined);
     uiConsole("logged out");
-  };
-
-  // Check the RPC file for the implementation
-  const getAccounts = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const address = await RPC.getAccounts(provider);
-    uiConsole(address);
-  };
-
-  const getBalance = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const balance = await RPC.getBalance(provider);
-    uiConsole(balance);
-  };
-
-  const signMessage = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const signedMessage = await RPC.signMessage(provider);
-    uiConsole(signedMessage);
-  };
-
-  const sendTransaction = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    uiConsole("Sending Transaction...");
-    const transactionReceipt = await RPC.sendTransaction(provider);
-    uiConsole(transactionReceipt);
   };
 
   function uiConsole(...args: any[]): void {
     const el = document.querySelector("#console>p");
     if (el) {
       el.innerHTML = JSON.stringify(args || {}, null, 2);
+      console.log(...args);
     }
-    console.log(...args);
+  }
+
+  if (isInitializing) {
+    return (
+      <div className="max-w-lg mx-auto mt-10">
+        <div className="flex flex-col gap-2 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <p className="mt-2">Connecting to Web3Auth...</p>
+        </div>
+      </div>
+    );
   }
 
   const loggedInView = (
-    <>
-      <div className="flex-container">
-        <div>
-          <button onClick={getUserInfo} className="card">
-            Get User Info
-          </button>
-        </div>
-        <div>
-          <button onClick={getAccounts} className="card">
-            Get Accounts
-          </button>
-        </div>
-        <div>
-          <button onClick={getBalance} className="card">
-            Get Balance
-          </button>
-        </div>
-        <div>
-          <button onClick={signMessage} className="card">
-            Sign Message
-          </button>
-        </div>
-        <div>
-          <button onClick={sendTransaction} className="card">
-            Send Transaction
-          </button>
-        </div>
-        <div>
-          <button onClick={logout} className="card">
-            Log Out
-          </button>
-        </div>
-      </div>
-    </>
+    <div className="flex flex-col gap-2 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
+      <h1 className="text-3xl">{userInfo?.name}</h1>
+      <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
+      <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
+      <button
+        onClick={logout}
+        className="max-w-32 bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-2 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+      >
+        Log Out
+      </button>
+    </div>
   );
 
   const unloggedInView = (
     <button
-      disabled={!isLoginEnabled}
       onClick={login}
       className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
     >
