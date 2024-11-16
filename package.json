@@ -33,14 +33,21 @@
     "test": "yarn foundry:test",
     "vercel": "yarn workspace @se-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
-    "verify": "yarn workspace @se-2/foundry verify"
+    "verify": "yarn workspace @se-2/foundry verify",
+    "testhook": "ts-node @se-2/nextjs/utils/cow-hook/cowBuildData.ts"
   },
   "devDependencies": {
     "husky": "~8.0.3",
-    "lint-staged": "~13.2.2"
+    "lint-staged": "~13.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "latest"
   },
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "viem": "^2.21.45",
+    "wagmi": "^2.12.32"
   }
 }
