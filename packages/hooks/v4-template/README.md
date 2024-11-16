@@ -67,15 +67,23 @@ function afterSwap(
 - ✅ Deployed to Ethereum Sepolia testnet
 - ✅ Created deployment scripts for easy replication
 
+## ❌ Problems
+
+- Not enough examples of patterns used in the hooks regarding the tokenManager (settle, take, sync etc..)
+- Issues with approvals and understanding which contract is doing calls to the cctp contract
+- Hard to debug uniswap v4 errors.. (getting NotSettledError and not understanding why)
+- Circle CCTP contract lacks, function `depositForBurnFrom` that would allow to transfer money from the EOA directly
+
 ## 🛠️ Technical Components
 
 1. **Smart Contracts**
-   - `AruSwapHook.sol`: Main hook implementation
-   - Test suite: `AruSwapHook.t.sol`
-   - Deployment scripts in `script/AruSwapHook/`
+   - `AruSwapHook.sol`: Main hook implementation [AruSwapHook](./src/AruSwapHook.sol)
+   - Test suite: `AruSwapHook.t.sol` [AruSwapHook.t](./test/AruSwapHook.t.sol)
+   - Deployment scripts in `script/AruSwapHook/` [scripts](./script/)
 
 2. **Deployments**
-   - Ethereum Sepolia deployment details in `broadcast/01_CreatePoolAndMintLiquidity.s.sol/11155111/run-latest.json`
+   - Ethereum Sepolia hook deployment `broadcast/00_AruSwapHook.s.sol/11155111/run-latest.json`
+   - Ethereum Sepolia pool deployment details in `broadcast/01_CreatePoolAndMintLiquidity.s.sol/11155111/run-latest.json`
 
 3. **Commands**
    - Check [notes](./notes.md)
