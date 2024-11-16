@@ -113,8 +113,9 @@ const Home: NextPage = () => {
             }}
           </ConnectButton.Custom>
         </div>
-        <p className="text-gray-400 mt-8 text-lg mb-0">Swap your assets securely across chains</p>
-        <p className="text-gray-400 text-lg mt-0">with a bridgeless experience.</p>
+        <p className="text-gray-400 mt-8 text-lg mb-0">
+          Swap your assets securely across chains with a bridgeless experience.
+        </p>
       </div>
     </div>
   );

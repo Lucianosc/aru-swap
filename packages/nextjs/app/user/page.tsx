@@ -5,6 +5,7 @@ import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { Loader2 } from "lucide-react";
+import WorldIDAuth from "~~/components/WorldIDAuth";
 
 const clientId = "BIZBqC4L8bFWbdFjPwIeboE4Pj9aKyuSjuaT9ystH8SsjCK8Xn4xpVbZmBwe4lV_evcBgze_PRE5XXbqIYPcueg";
 
@@ -36,8 +37,8 @@ const capitalizeFirstLetter = (str: string) => {
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-  const [provider, setProvider] = useState<IProvider | null>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [provider, setProvider] = useState<IProvider | null>(null);
+  const [loggedIn, setLoggedIn] = useState<"worldId" | "web3Auth">();
   const [userInfo, setUserInfo] = useState<any>();
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -50,8 +51,8 @@ function App() {
         await web3authInstance.initModal();
 
         if (web3authInstance.connected) {
-          setLoggedIn(true);
-          setProvider(web3authInstance.provider);
+          setLoggedIn("web3Auth");
+          // setProvider(web3authInstance.provider);
           const user = await web3authInstance.getUserInfo();
           setUserInfo(user);
         }
@@ -81,9 +82,9 @@ function App() {
     }
     try {
       const web3authProvider = await web3auth.connect();
-      setProvider(web3authProvider);
+      // setProvider(web3authProvider);
       if (web3auth.connected) {
-        setLoggedIn(true);
+        setLoggedIn("web3Auth");
         const user = await web3auth.getUserInfo();
         setUserInfo(user);
       }
@@ -98,8 +99,8 @@ function App() {
       return;
     }
     await web3auth.logout();
-    setProvider(null);
-    setLoggedIn(false);
+    // setProvider(null);
+    setLoggedIn(undefined);
     setUserInfo(undefined);
     uiConsole("logged out");
   };
@@ -117,7 +118,6 @@ function App() {
       <div className="max-w-lg mx-auto mt-10">
         <div className="flex flex-col gap-2 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <p className="mt-2">Connecting to Web3Auth...</p>
         </div>
       </div>
     );
@@ -126,26 +126,33 @@ function App() {
   return (
     <div className="text-white p-4">
       <div className="max-w-lg mx-auto mt-10">
-        {loggedIn ? (
-          <div className="flex flex-col gap-2 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
-            <h1 className="text-3xl">{userInfo?.name}</h1>
-            <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
-            <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
-            <button
-              onClick={logout}
-              className="max-w-32 bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-2 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
-            >
-              Log Out
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={login}
-            className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 mt-5 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
-          >
-            Web3Auth login
-          </button>
-        )}
+        <div className="flex flex-col gap-4 justify-center items-center bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
+          {loggedIn === "web3Auth" ? (
+            <>
+              <h1 className="text-3xl">{userInfo?.name}</h1>
+              <h2 className="text-xl mb-0">Verified by {capitalizeFirstLetter(userInfo?.verifier)}</h2>
+              <h2 className="text-xl ">with {capitalizeFirstLetter(userInfo?.typeOfLogin)} Account</h2>
+              <button
+                onClick={logout}
+                className="max-w-32 bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-2 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              {!(loggedIn === "worldId") && (
+                <button
+                  onClick={login}
+                  className="bg-blue-500 hover:bg-blue-600 shadow-blue-500/25 w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 shadow-lg transition"
+                >
+                  Web3Auth social login
+                </button>
+              )}
+              <WorldIDAuth onSuccess={() => setLoggedIn("worldId")} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
