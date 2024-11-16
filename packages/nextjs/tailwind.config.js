@@ -52,6 +52,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      fontFamily: {
+        inter: ["var(--font-inter)"],
+      },
       colors: {
         blue: {
           500: "rgb(87, 139, 250)",
