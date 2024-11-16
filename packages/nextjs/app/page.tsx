@@ -45,7 +45,7 @@ const Home: NextPage = () => {
       <div className="max-w-lg mx-auto mt-10">
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-2">Swap & bridge,</h1>
-          <h1 className="text-5xl font-bold mb-2">the hell out.</h1>
+          <h2 className="text-4xl font-bold mb-2">the hell out of everything.</h2>
         </div>
         <div className="bg-gray-800/50 rounded-3xl p-4 backdrop-blur-sm">
           <>
@@ -113,7 +113,8 @@ const Home: NextPage = () => {
             }}
           </ConnectButton.Custom>
         </div>
-        <p className="text-gray-400 text-center mt-8 text-lg">Some great phrase here...</p>
+        <p className="text-gray-400 mt-8 text-lg mb-0">Swap your assets securely across chains</p>
+        <p className="text-gray-400 text-lg mt-0">with a bridgeless experience.</p>
       </div>
     </div>
   );
