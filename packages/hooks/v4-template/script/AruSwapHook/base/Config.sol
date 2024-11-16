@@ -9,7 +9,8 @@ import {Currency} from "v4-core/src/types/Currency.sol";
 contract Config {
     /// @dev populated with default anvil addresses
     // USDC
-    IERC20 constant token0 = IERC20(address(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238)); // https://developers.circle.com/stablecoins/usdc-on-test-networks usdc 
+    // https://developers.circle.com/stablecoins/usdc-on-test-networks usdc 
+    IERC20 constant token0 = IERC20(address(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238)); 
     // TEST_TOKEN
     IERC20 constant token1 = IERC20(address(0x34182d56d905a195524a8F1813180C134687ca34));
     // https://sepolia.etherscan.io/tx/0xd0c026c0b843d4406818f6f13322635d2d583d1269bf04a63376142b209891e6

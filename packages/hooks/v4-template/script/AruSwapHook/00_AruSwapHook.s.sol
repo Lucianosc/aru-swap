@@ -17,7 +17,7 @@ contract AruSwapHookScript is Script, Constants, Config {
     function setUp() public {}
 
     function run() public {
-        // From the test file, we can see only AFTER_SWAP_FLAG is needed
+        // Only set AFTER_SWAP_FLAG since that's the only hook we implement
         uint160 flags = uint160(Hooks.AFTER_SWAP_FLAG);
 
         // Prepare constructor arguments based on the test implementation
