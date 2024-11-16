@@ -23,10 +23,9 @@ contract SwapScript is Script, Constants, Config {
     // --- pool configuration --- //
     uint24 lpFee = 3000; // 0.30%
     int24 tickSpacing = 60;
-
     // --- cross-chain configuration --- //
-    uint32 destinationDomain = 1; // destination chain domain ID
-    address recipient = address(0x81d786b35f3EA2F39Aa17cb18d9772E4EcD97206); // recipient address on destination chain
+    uint32 destinationDomain = 6; // destination chain domain ID
+    address recipient = address(0xb01DB4A1AF9bA5001676Fc60f05D1833746f2460); // recipient address on destination chain
 
     function run() external {
         PoolKey memory pool = PoolKey({
@@ -47,13 +46,17 @@ contract SwapScript is Script, Constants, Config {
         vm.broadcast();
         token0.approve(address(hookContract), type(uint256).max);
 
+        // Then approve the token messenger to send USDC to the recipient
+        vm.broadcast();
+        token0.approve(address(tokenMessenger), type(uint256).max);
+
         // ------------------------------ //
         // Swap token1 into USDC and bridge //
         // ------------------------------ //
         bool zeroForOne = false; // swap token1 for USDC (token0)
         IPoolManager.SwapParams memory params = IPoolManager.SwapParams({
             zeroForOne: zeroForOne,
-            amountSpecified: -1e18,
+            amountSpecified: 100,
             sqrtPriceLimitX96: zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT // unlimited impact
         });
 

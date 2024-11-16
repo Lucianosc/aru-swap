@@ -57,3 +57,13 @@ forge script script/AruSwapHook/04_SwapAndBridge.s.sol \
     --broadcast \
     --verify
 ```
+
+# Bridge CCTP
+
+```sh
+forge script script/AruSwapHook/05_bridge_cctp.s.sol \
+    --rpc-url https://eth-sepolia.public.blastapi.io \
+    --account deployer \
+    --broadcast \
+    --verify
+```

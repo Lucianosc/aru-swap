@@ -46,7 +46,7 @@ contract SwapScript is Script, Constants, Config {
         bool zeroForOne = true;
         IPoolManager.SwapParams memory params = IPoolManager.SwapParams({
             zeroForOne: zeroForOne,
-            amountSpecified: 100e18,
+            amountSpecified: 10000000,
             sqrtPriceLimitX96: zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT // unlimited impact
         });
 
