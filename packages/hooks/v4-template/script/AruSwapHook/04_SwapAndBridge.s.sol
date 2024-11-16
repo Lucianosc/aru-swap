@@ -37,20 +37,20 @@ contract SwapScript is Script, Constants, Config {
             hooks: hookContract
         });
 
-        // approve tokens to the swap router
+        // First approve tokens to the swap router
         vm.broadcast();
         token0.approve(address(swapRouter), type(uint256).max);
         vm.broadcast();
         token1.approve(address(swapRouter), type(uint256).max);
 
-        // Approve hook to spend USDC
+        // Then approve the hook to take USDC (token0) from us after the swap
         vm.broadcast();
         token0.approve(address(hookContract), type(uint256).max);
 
         // ------------------------------ //
-        // Swap 100e18 token1 into USDC and bridge //
+        // Swap token1 into USDC and bridge //
         // ------------------------------ //
-        bool zeroForOne = false; // swap token1 for USDC (assuming USDC is token0)
+        bool zeroForOne = false; // swap token1 for USDC (token0)
         IPoolManager.SwapParams memory params = IPoolManager.SwapParams({
             zeroForOne: zeroForOne,
             amountSpecified: -1e18,

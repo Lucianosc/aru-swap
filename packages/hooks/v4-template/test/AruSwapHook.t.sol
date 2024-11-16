@@ -39,9 +39,8 @@ contract MockTokenMessenger {
         address burnToken
     ) external returns (uint64) {
         // Transfer tokens to zero address to simulate burning
-        MockERC20(burnToken).approve(address(this), amount);
-        MockERC20(burnToken).transferFrom(msg.sender, address(0), amount);
-        
+        // MockERC20(burnToken).approve(address(this), amount);
+        MockERC20(burnToken).transferFrom(msg.sender, address(0), amount);        
         emit DepositForBurn(amount, destinationDomain, mintRecipient, burnToken);
         return 1; // Return a dummy message sequence
     }
@@ -179,11 +178,11 @@ contract AruSwapHookTest is Test, Fixtures {
         
         assertTrue(foundEvent, "DepositForBurn event not emitted");
 
-        // Verify the tokens were actually burned
+        // Verify the tokens were actually burned (should be equal since the tokens are burned)
         assertEq(
             finalUsdcBalance,
-            initialUsdcBalance + uint256(uint128(swapDelta.amount0())),
-            "USDC balance not updated correctly"
+            initialUsdcBalance,
+            "USDC balance should remain the same after burn"
         );
 
         // Verify the swap amounts
