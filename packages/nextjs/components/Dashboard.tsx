@@ -42,12 +42,12 @@ const mockWallets = [
 ];
 
 const portfolioData = [
-  { name: "Mar 10", value: 4000 },
-  { name: "Mar 11", value: 4500 },
-  { name: "Mar 12", value: 4200 },
-  { name: "Mar 13", value: 4800 },
-  { name: "Mar 14", value: 5100 },
-  { name: "Mar 15", value: 4900 },
+  { name: "Jun", value: 4000 },
+  { name: "Jul", value: 4500 },
+  { name: "Aug", value: 4200 },
+  { name: "Sep", value: 4800 },
+  { name: "Oct", value: 5300 },
+  { name: "Nov", value: 8900 },
 ];
 
 const Dashboard = () => {
