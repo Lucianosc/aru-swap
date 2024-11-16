@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ArrowDownUp } from "lucide-react";
 import { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { TokenInput } from "~~/components/TokenInput";
 import { generateCombinedCallData } from "~~/utils/cow-hook/cowGenerateHookData";
+import CowHookDappComponent from "../components/cowSwap"
 
 const Home: NextPage = () => {
   const [inputAmount, setInputAmount] = useState("");
@@ -43,6 +44,9 @@ const Home: NextPage = () => {
   return (
     <div className="text-white p-4">
       <div className="max-w-lg mx-auto mt-10">
+        <div>
+          <CowHookDappComponent />
+        </div>
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-2">Swap & bridge,</h1>
           <h2 className="text-4xl font-bold mb-2">the hell out of everything.</h2>
